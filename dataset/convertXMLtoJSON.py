@@ -1,6 +1,7 @@
 """
 converterXMLtoJSON
 
+converts
 detect all annotations in xml file
 it works for one class in mask rcnn - damage class
 
@@ -10,8 +11,8 @@ it works for one class in mask rcnn - damage class
 
 import xml.etree.cElementTree as ET
 import json
-import sys
 import os
+import os.path as path
 
 #################################################
 #####                PATHS                  #####
@@ -28,6 +29,7 @@ def process_bar(count, total, status=''):
     filled_len = int(round(bar_len * count / float(total)))
     percents = round(100.0 * count / float(total), 1)
     bar = '=' * filled_len + '-' * (bar_len - filled_len)
+
     print(('[%s] %s%s ...%s\r' % (bar, percents, '%', status)))
 
 
@@ -126,15 +128,29 @@ def XMLtoJson():
                         images.update(size)
 
                         all_json[img_name] = images.copy()
-                        number = number + 1
 
+                        number = number + 1
+        #print(all_json)
         with open(dir+'/'+"dataset.json", "a") as outfile:
             json.dump(all_json, outfile)
-            print("File dataset.json was save in: ",dir )
-            open(dir+'/'+"dataset.json", "w").close()
+            print("File dataset.json was save in: ",dir)
+            #open(dir+'/'+"dataset.json", "w").close()
 
 
 if __name__ == "__main__":
+
+    #check if alreday exist dataset.json file in /train and /val
+
+    fileindirTrain = (train+"/dataset.json")
+    fileindirVal = (val+"/dataset.json")
+
+    if os.path.isfile(fileindirTrain):
+        os.remove(fileindirTrain)
+        print("deleting an existent file --> dataset.json from /train")
+
+    if os.path.isfile(fileindirVal):
+        os.remove(fileindirVal)
+        print("deleting an existent file --> dataset.json from /val")
 
     grabNamesImages()
     XMLtoJson()
