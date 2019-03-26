@@ -50,25 +50,17 @@ def XMLtoJson():
     path = [train, val]
 
     for dir in path:
-        try:
-            imgs_list = open(dir+'/image.txt','r').readlines()
-        except OSError as err:
-            print("no hay ficheros en :", dir)
+        imgs_list = open(dir+'/image.txt','r').readlines()
 
+        print("-----------")
+        print(imgs_list)
+        print("-----------")
         images, bndbox, size, polygon = {}, {}, {}, {}
         # images = []
         count = 1
         total = len(imgs_list)
         all_json = {}
 
-        counterObject ={}
-        xmin={}
-        xmax={}
-        ymin={}
-        ymax={}
-        regionsTemp={}
-
-        regi = {}
 
 
         for img in imgs_list: #for each image in the list in image.txt
@@ -81,26 +73,28 @@ def XMLtoJson():
                 images.update({"filename": img_name})
                 xml_n = namexml + '.xml'
 
-                try:
-                    tree = ET.ElementTree(file=dir+'/'+xml_n)
-                    root = tree.getroot()
+                tree = ET.ElementTree(file=dir+'/'+xml_n)
+                root = tree.getroot()
 
-                except OSError as err:
-                    print("no hay ficheros en :", dir)
+                #dictorionais
+                counterObject = {}
+                xmin = {}
+                xmax = {}
+                ymin = {}
+                ymax = {}
+                regionsTemp = {}
+
+                regi = {}
 
                 number = 0
                 for child_of_root in root:
                     if child_of_root.tag == 'filename':
                         image_id = (child_of_root.text)
-                        try:
-                            sizetmp = os.path.getsize(dir+'/'+image_id)
-                        except OSError as err:
-                            print("no hay ficheros en :", dir)
 
+                        sizetmp = os.path.getsize(dir+'/'+image_id)
 
                     if child_of_root.tag == 'object':
-
-                        print("estamo aqui")
+                        #number=0
 
 
                         for child_of_object in child_of_root:
@@ -108,6 +102,7 @@ def XMLtoJson():
                             if child_of_object.tag == 'name':
                                 category_id = child_of_object.text
                                 counterObject[category_id] = number
+
 
                             if child_of_object.tag == 'bndbox':
                                 for child_of_root in child_of_object:
@@ -136,7 +131,6 @@ def XMLtoJson():
                         regionsTemp = ({"all_points_x": (xmin[category_id], xvalue, xmax[category_id], xmax[category_id], xmax[category_id], xvalue, xmin[category_id], xmin[category_id], xmin[category_id]),
                                         "all_points_y": (ymin[category_id], ymin[category_id], ymin[category_id], yvalue, ymax[category_id], ymax[category_id], ymax[category_id], yvalue, ymin[category_id])})
 
-
                         #print(regionsTemp[category_id])
                         damage = {"damage": "damage"}
                         regions.update({"region_attributes": damage})
@@ -150,13 +144,10 @@ def XMLtoJson():
                         regions.update(shapes)
                         regions.update(polygon)
 
-                        #regions.update(regionsTemp[category_id])
 
-                        #print(regions)
+
                         regi[number] = regions.copy()
-
-
-                        # hasta aquí esta bien
+                        #print(regi[number],[category_id])
 
                         regions = {"regions": regi}
 
@@ -165,21 +156,28 @@ def XMLtoJson():
                         images.update(size)
 
                         all_json[img_name] = images.copy()
-                        number = +1
+
+                        print(all_json)
+
+                        print(number)
+
+                        number = number + 1
 
 
-    with open(dir+'/'+"dataset.json", "a") as outfile:
-        json.dump(all_json, outfile)
 
-       # open(dir+'/'+"dataset.json", "w").close()
+
+        with open(dir+'/'+"dataset.json", "a") as outfile:
+            json.dump(all_json, outfile)
+            print("File dataset.json was save in: ",dir )
+
+            open(dir+'/'+"dataset.json", "w").close()
+
 
 
 
 if __name__ == "__main__":
 
     grabNamesImages()
-    ## load image list from txt file
-
     XMLtoJson()
 
 
