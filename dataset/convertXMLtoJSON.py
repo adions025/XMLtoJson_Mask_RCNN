@@ -109,7 +109,9 @@ def XMLtoJson():
                         regionsTemp = ({"all_points_x": (xmin[category_id], xvalue, xmax[category_id], xmax[category_id], xmax[category_id], xvalue, xmin[category_id], xmin[category_id], xmin[category_id]),
                                         "all_points_y": (ymin[category_id], ymin[category_id], ymin[category_id], yvalue, ymax[category_id], ymax[category_id], ymax[category_id], yvalue, ymin[category_id])})
 
-                        damage = {"damage": "damage"}
+                        #damage = {"damage": "damage"}
+                        category_id_name = (category_id.split(' ')[0])#this is because some <name>SD 1<name>, just use SD
+                        damage = {"name": category_id_name}
                         regions.update({"region_attributes": damage})
 
                         shapes = {"shape_attributes": regionsTemp}
