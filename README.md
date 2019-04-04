@@ -62,26 +62,26 @@ Generates the polygon shape between the four points of the rectangle in order to
                 },
                 "shape_attributes": {
                     "all_points_x": [
-                        2241,
-                        2477,
-                        2713,
-                        2713,
-                        2713,
-                        2477,
-                        2241,
-                        2241,
-                        2241
+                        2241, # xmin
+                        2477, # X
+                        2713, # xmax
+                        2713, # xmax
+                        2713, # xmax
+                        2477, # X
+                        2241, # xmin
+                        2241, # xmin
+                        2241  # xmin
                     ],
                     "all_points_y": [
-                        997,
-                        997,
-                        997,
-                        1161,
-                        1325,
-                        1325,
-                        1325,
-                        1161,
-                        997
+                        997,  #ymin
+                        997,  #ymin
+                        997,  #ymin
+                        1161, #Y
+                        1325, #ymax
+                        1325, #ymax
+                        1325, #ymax
+                        1161, #Y
+                        997   #ymin
                     ]
                 }
             }
@@ -91,6 +91,15 @@ Generates the polygon shape between the four points of the rectangle in order to
 }
 
 ```
+##notes
+If you noticed, the rectangular shape only has the four points, but for the polygon shape we need more points, these points will be created from what we have.
+
+```
+X = xmin + ((xmax-xmin)/2)
+Y = ymin + ((ymax-ymin)/2)
+```
+
+In this way we create a false mask for MaskRCNN with annotations made with LabelImg.
 
 
 
