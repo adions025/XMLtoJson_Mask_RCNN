@@ -10,7 +10,10 @@ Generates the polygon shape between the four points of the rectangle in order to
 ### run this file inside your /dataset folder
 * /dataset
     * /train
-    * /van
+    * /val
+    * convertXMLtoJSON.py
+
+````````````$ python convertXMLtoJSON.py````````````
 
 
 ### How should your XML be?
