@@ -90,8 +90,11 @@ Generates the polygon shape between the four points of the rectangle in order to
 }
 
 ```
-##notes
+## notes
 If you noticed, the rectangular shape only has the four points, but for the polygon shape we need more points, these points will be created from what we have.
+
+### keyworks
+xml, json, converterter, xml to json, convertidor de xml a json, mask rcnn
 
 ```
 X = xmin + ((xmax-xmin)/2)
