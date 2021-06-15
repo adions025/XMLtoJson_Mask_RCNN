@@ -10,117 +10,89 @@ It works for one class in Mask R-CNN
 import xml.etree.cElementTree as ET
 import json
 import os
-import os.path as path
+import os.path as paths
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
-path = []  # list used for two folder /train and /val
 train = os.path.join(ROOT_DIR, "train")
 val = os.path.join(ROOT_DIR, "val")
-path = [train, val]
+paths = [train, val]
 
 
 def save_img_to_file():
-    for file in path:
+    for file in paths:
         files = os.listdir(file)
         with open(file + '/image.txt', 'w') as f:
             for item in files:
                 if (item.endswith('.jpg')):
                     f.write("%s\n" % item)
         f.close()
-    print("List of images, images.tx, was save in", file)
 
 
 def convert_xml_to_json():
-    for dir in path:
+    for path in paths:
         images, bndbox, size, polygon, all_json = {}, {}, {}, {}, {}
+        imgs_list = open(path + '/image.txt', 'r').read().splitlines()
 
-        imgs_list = open(dir + '/image.txt', 'r').readlines()
+        for img in imgs_list:
+            namexml = img.split('.jpg')[0] + '.xml'
+            images.update({"filename": img})
+            root = ET.ElementTree(file=path + '/' + namexml).getroot()
+            counterObject, xmin, xmax, ymin, ymax, regionsTemp, regi = {}, {}, {}, {}, {}, {}, {}
+            number = 0
+            for child_of_root in root:
+                if child_of_root.tag == 'filename':
+                    image_id = (child_of_root.text)
+                    sizetmp = os.path.getsize(path + '/' + image_id)
+                if child_of_root.tag == 'object':
+                    for child_of_object in child_of_root:
+                        if child_of_object.tag == 'name':
+                            category_id = child_of_object.text
+                            counterObject[category_id] = number
+                        if child_of_object.tag == 'bndbox':
+                            for child_of_root in child_of_object:
+                                if child_of_root.tag == 'xmin':
+                                    xmin[category_id] = int(child_of_root.text)
+                                if child_of_root.tag == 'xmax':
+                                    xmax[category_id] = int(child_of_root.text)
+                                if child_of_root.tag == 'ymin':
+                                    ymin[category_id] = int(child_of_root.text)
+                                if child_of_root.tag == 'ymax':
+                                    ymax[category_id] = int(child_of_root.text)
 
-        for img in imgs_list:  # for each image in the list in image.txt
-            if 'jpg' in img:
-                img_name = img.strip().split('/')[-1]
-                namexml = (img_name.split('.jpg')[0])
+                    xmintmp = int(xmax[category_id] - xmin[category_id]) / 2
+                    xvalue = int(xmin[category_id] + xmintmp)
+                    ymintemp = int(ymax[category_id] - ymin[category_id]) / 2
+                    yvalue = int(ymin[category_id] + ymintemp)
 
-                images.update({"filename": img_name})
-                xml_n = namexml + '.xml'
+                    regions = {}
+                    regionsTemp = ({"all_points_x": (
+                        xmin[category_id], xvalue, xmax[category_id], xmax[category_id], xmax[category_id], xvalue,
+                        xmin[category_id], xmin[category_id], xmin[category_id]),
+                        "all_points_y": (
+                            ymin[category_id], ymin[category_id], ymin[category_id], yvalue,
+                            ymax[category_id], ymax[category_id], ymax[category_id], yvalue,
+                            ymin[category_id])})
 
-                tree = ET.ElementTree(file=dir + '/' + xml_n)
-                root = tree.getroot()
+                    category_id_name = (
+                        category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
+                    damage = {"name": category_id_name}
+                    regions.update({"region_attributes": damage})
+                    shapes = {"shape_attributes": regionsTemp}
+                    regions.update(shapes)
+                    polygon.update({"name": "polygon"})
+                    regions.update(shapes)
+                    regions.update(polygon)
+                    regi[number] = regions.copy()
+                    regions = {"regions": regi}
+                    images.update(regions)
+                    size = {"size": sizetmp}
+                    images.update(size)
+                    all_json[img] = images.copy()
+                    number = number + 1
 
-                # more dics for create json documents
-                counterObject, xmin, xmax, ymin, ymax, regionsTemp, regi = {}, {}, {}, {}, {}, {}, {}
-
-                number = 0
-                for child_of_root in root:
-                    if child_of_root.tag == 'filename':
-                        image_id = (child_of_root.text)
-                        sizetmp = os.path.getsize(dir + '/' + image_id)
-
-                    if child_of_root.tag == 'object':
-                        for child_of_object in child_of_root:
-                            if child_of_object.tag == 'name':
-                                category_id = child_of_object.text
-                                counterObject[category_id] = number
-
-                            if child_of_object.tag == 'bndbox':
-                                for child_of_root in child_of_object:
-                                    if child_of_root.tag == 'xmin':
-                                        xmin[category_id] = int(child_of_root.text)
-
-                                    if child_of_root.tag == 'xmax':
-                                        xmax[category_id] = int(child_of_root.text)
-
-                                    if child_of_root.tag == 'ymin':
-                                        ymin[category_id] = int(child_of_root.text)
-
-                                    if child_of_root.tag == 'ymax':
-                                        ymax[category_id] = int(child_of_root.text)
-
-                        xmintmp = int(xmax[category_id] - xmin[category_id]) / 2
-                        xvalue = int(xmin[category_id] + xmintmp)
-
-                        ymintemp = int(ymax[category_id] - ymin[category_id]) / 2
-                        yvalue = int(ymin[category_id] + ymintemp)
-
-                        regions, regions1 = {}, {}
-                        regionsTemp = ({"all_points_x": (
-                            xmin[category_id], xvalue, xmax[category_id], xmax[category_id], xmax[category_id], xvalue,
-                            xmin[category_id], xmin[category_id], xmin[category_id]),
-                            "all_points_y": (
-                                ymin[category_id], ymin[category_id], ymin[category_id], yvalue,
-                                ymax[category_id], ymax[category_id], ymax[category_id], yvalue,
-                                ymin[category_id])})
-
-                        # damage = {"damage": "damage"}
-                        category_id_name = (
-                            category_id.split(' ')[0])  # this is because some <name>SD 1<name>, just use SD
-                        damage = {"name": category_id_name}
-                        regions.update({"region_attributes": damage})
-
-                        shapes = {"shape_attributes": regionsTemp}
-
-                        regions.update(shapes)
-
-                        polygon.update({"name": "polygon"})
-                        regions.update(shapes)
-                        regions.update(polygon)
-
-                        regi[number] = regions.copy()
-                        # print(regi[number],[category_id])
-
-                        regions = {"regions": regi}
-
-                        images.update(regions)
-                        size = {"size": sizetmp}
-                        images.update(size)
-
-                        all_json[img_name] = images.copy()
-
-                        number = number + 1
-        # print(all_json)
-        with open(dir + '/' + "dataset.json", "a") as outfile:
+        with open(path + '/' + "dataset.json", "a") as outfile:
             json.dump(all_json, outfile)
-            print("File dataset.json was save in: ", dir)
+            print("File dataset.json was save in: ", path)
 
 
 if __name__ == "__main__":
