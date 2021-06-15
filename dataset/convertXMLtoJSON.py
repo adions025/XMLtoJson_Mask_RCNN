@@ -17,19 +17,9 @@ path = []  # list used for two folder /train and /val
 train = os.path.join(ROOT_DIR, "train")
 val = os.path.join(ROOT_DIR, "val")
 path = [train, val]
-count = 0
 
 
-def process_bar(count, total, status=''):
-    bar_len = 50
-    filled_len = int(round(bar_len * count / float(total)))
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    print(('[%s] %s%s ...%s\r' % (bar, percents, '%', status)))
-
-
-def grabNamesImages():
+def save_img_to_file():
     for file in path:
         files = os.listdir(file)
         with open(file + '/image.txt', 'w') as f:
@@ -40,18 +30,13 @@ def grabNamesImages():
     print("List of images, images.tx, was save in", file)
 
 
-def XMLtoJson():
+def convert_xml_to_json():
     for dir in path:
         images, bndbox, size, polygon, all_json = {}, {}, {}, {}, {}
 
         imgs_list = open(dir + '/image.txt', 'r').readlines()
 
-        count = 1
-        total = len(imgs_list)
-
         for img in imgs_list:  # for each image in the list in image.txt
-            process_bar(count, total)
-            count += 1
             if 'jpg' in img:
                 img_name = img.strip().split('/')[-1]
                 namexml = (img_name.split('.jpg')[0])
@@ -136,7 +121,6 @@ def XMLtoJson():
         with open(dir + '/' + "dataset.json", "a") as outfile:
             json.dump(all_json, outfile)
             print("File dataset.json was save in: ", dir)
-            # open(dir+'/'+"dataset.json", "w").close()
 
 
 if __name__ == "__main__":
@@ -153,5 +137,5 @@ if __name__ == "__main__":
         os.remove(fileindirVal)
         print("deleting an existent file --> dataset.json from /val")
 
-    grabNamesImages()
-    XMLtoJson()
+    save_img_to_file()
+    convert_xml_to_json()
