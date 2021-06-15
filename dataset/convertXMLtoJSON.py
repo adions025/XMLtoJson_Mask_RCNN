@@ -9,8 +9,7 @@ It works for one class in Mask R-CNN
 """
 
 import xml.etree.cElementTree as ET
-import json
-import os
+import json, os
 import os.path as path
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -37,8 +36,8 @@ def convert_xml_to_json():
         for img in images_list:
             root = ET.ElementTree(file=dir + '/' + img.split('.jpg')[0] + '.xml').getroot()
             counterObject, xmin, xmax, ymin, ymax, regionsTemp, regi = {}, {}, {}, {}, {}, {}, {}
-            number = 0
 
+            number = 0
             for child_of_root in root:
                 if child_of_root.tag == 'filename':
                     image_id = child_of_root.text
