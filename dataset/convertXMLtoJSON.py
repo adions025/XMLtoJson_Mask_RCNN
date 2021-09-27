@@ -23,7 +23,7 @@ def save_img_to_file():
         files = os.listdir(file)
         with open(file + '/image.txt', 'w') as f:
             for item in files:
-                if (item.endswith('.jpg')):
+                if item.endswith('.jpg'):
                     f.write("%s\n" % item)
         f.close()
 
@@ -34,9 +34,9 @@ def convert_xml_to_json():
         imgs_list = open(path + '/image.txt', 'r').read().splitlines()
 
         for img in imgs_list:
-            namexml = img.split('.jpg')[0] + '.xml'
+            name_xml = img.split('.jpg')[0] + '.xml'
             images.update({"filename": img})
-            root = ET.ElementTree(file=path + '/' + namexml).getroot()
+            root = ET.ElementTree(file=path + '/' + name_xml).getroot()
             counterObject, xmin, xmax, ymin, ymax, regionsTemp, regi = {}, {}, {}, {}, {}, {}, {}
             number = 0
             for child_of_root in root:
@@ -75,8 +75,7 @@ def convert_xml_to_json():
 
                     category_id_name = (
                         category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
-                    damage = {"name": category_id_name}
-                    regions.update({"region_attributes": damage})
+                    regions.update({"region_attributes": {"name": category_id_name}})
                     shapes = {"shape_attributes": regionsTemp}
                     regions.update(shapes)
                     polygon.update({"name": "polygon"})
@@ -85,14 +84,19 @@ def convert_xml_to_json():
                     regi[number] = regions.copy()
                     regions = {"regions": regi}
                     images.update(regions)
-                    size = {"size": sizetmp}
-                    images.update(size)
+                    images.update({"size": sizetmp})
                     all_json[img] = images.copy()
-                    number = number + 1
+                    number += 1
 
         with open(path + '/' + "dataset.json", "a") as outfile:
             json.dump(all_json, outfile)
             print("File dataset.json was save in: ", path)
+
+
+def read_json(dir_path: str, filename: str):
+    with open(dir_path + '/' + filename) as json_file:
+        data = json.load(json_file)
+    return data
 
 
 if __name__ == "__main__":
@@ -111,3 +115,8 @@ if __name__ == "__main__":
 
     save_img_to_file()
     convert_xml_to_json()
+
+    # json1 = json.dumps(read_json(train, "dataset.json"), sort_keys=True)
+    # json2 = json.dumps(read_json(train, "dataset_good.json"), sort_keys=True)
+    # if json1 == json2:
+    #     print("Equals!")
