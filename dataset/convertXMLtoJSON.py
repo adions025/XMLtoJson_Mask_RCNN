@@ -99,19 +99,21 @@ def read_json(dir_path: str, filename: str):
     return data
 
 
+def remove_file(file_name: str):
+    if os.path.isfile(file_name):
+        os.remove(file_name)
+        print("Deleting file %s" % file_name)
+    else:
+        print("It does not exist  %s" % file_name)
+
+
 if __name__ == "__main__":
+    # Check if already exist dataset.json
+    file_train = os.path.join(train, "dataset.json")
+    file_val = os.path.join(val, "dataset.json")
 
-    # check if alreday exist dataset.json file in /train and /val
-    fileindirTrain = (train + "/dataset.json")
-    fileindirVal = (val + "/dataset.json")
-
-    if os.path.isfile(fileindirTrain):
-        os.remove(fileindirTrain)
-        print("deleting an existent file --> dataset.json from /train")
-
-    if os.path.isfile(fileindirVal):
-        os.remove(fileindirVal)
-        print("deleting an existent file --> dataset.json from /val")
+    remove_file(file_train)
+    remove_file(file_val)
 
     save_img_to_file()
     convert_xml_to_json()
