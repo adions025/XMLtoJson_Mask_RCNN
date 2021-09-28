@@ -1,9 +1,9 @@
 # XMLtoJson_Mask_RCNN
-Use the segmentation in Mask_RCNN, even if the annotation form is rectangular instead of polygon.
+Now you can use segmentation in Mask_RCNN, even if your annotations are rectangular instead of polygon.
 
-The use of false masks does not help to be more precise, as it is not providing new information beyond the bounding boxes.
+A false masks does not help to be more precise, as it is not providing new information beyond the bounding boxes.
 
-Generates the polygon shape between the four points of the rectangle in order to achieve the polygon shape, a false mask for the maskrcnn.
+Generates the polygon shape between the four points of the rectangle in order to achieve the polygon shape.
 
 
 ### run this file inside your /dataset folder
@@ -101,7 +101,7 @@ X = xmin + ((xmax-xmin)/2)
 Y = ymin + ((ymax-ymin)/2)
 ```
 
-In this way we create a false mask for MaskRCNN with annotations made with LabelImg.
+The way to create a false mask for MaskRCNN with annotations made with LabelImg.
 
 
 
