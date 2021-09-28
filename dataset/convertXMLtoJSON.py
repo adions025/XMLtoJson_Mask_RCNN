@@ -16,7 +16,6 @@ from os.path import join
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 train_dir = os.path.join(ROOT_DIR, "train")
 val_dir = os.path.join(ROOT_DIR, "val")
-paths = [train_dir, val_dir]
 
 
 def has_files(path: str) -> bool:
@@ -42,7 +41,7 @@ def list_images(path: str) -> list:
 
 def save_images_log(path: str):
     """
-    Save a list of images in a specific path.
+    Grab images list and save a log in a specific path.
 
     :param path: A str like /to/path/
     """
@@ -54,13 +53,13 @@ def save_images_log(path: str):
         f = open(join(path, "image.txt"), 'w')
         [f.write("%s\n" % x) for x in images]
         f.close()
+        return images
 
 
-def convert_xml_to_json(path: str):
-    images, bndbox, size, polygon, all_json = {}, {}, {}, {}, {}
-    imgs_list = open(path + '/image.txt', 'r').read().splitlines()
+def convert_xml_to_json(path: str, image_list: list):
+    images, size, polygon, all_json = {}, {}, {}, {}
 
-    for img in imgs_list:
+    for img in image_list:
         name_xml = img.split('.jpg')[0] + '.xml'
         images.update({"filename": img})
         root = ET.ElementTree(file=path + '/' + name_xml).getroot()
@@ -68,7 +67,7 @@ def convert_xml_to_json(path: str):
         number = 0
         for child_of_root in root:
             if child_of_root.tag == 'filename':
-                image_id = (child_of_root.text)
+                image_id = child_of_root.text
                 sizetmp = os.path.getsize(path + '/' + image_id)
             if child_of_root.tag == 'object':
                 for child_of_object in child_of_root:
@@ -100,8 +99,7 @@ def convert_xml_to_json(path: str):
                         ymax[category_id], ymax[category_id], ymax[category_id], yvalue,
                         ymin[category_id])})
 
-                category_id_name = (
-                    category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
+                category_id_name = (category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
                 regions.update({"region_attributes": {"name": category_id_name}})
                 shapes = {"shape_attributes": regionsTemp}
                 regions.update(shapes)
@@ -135,7 +133,6 @@ def remove_file(file_name: str):
 
 
 if __name__ == "__main__":
-
     # Json file for both train and val dir
     file_train = os.path.join(train_dir, "dataset.json")
     file_val = os.path.join(val_dir, "dataset.json")
@@ -144,13 +141,13 @@ if __name__ == "__main__":
     remove_file(file_train)
     remove_file(file_val)
 
-    # Save a log in both train and val
-    save_images_log(train_dir)
-    save_images_log(val_dir)
+    # Grab images and save a log in both train and val
+    images_train = save_images_log(train_dir)
+    images_val = save_images_log(val_dir)
 
     # Convert from xml to json in both train and val
-    convert_xml_to_json(train_dir)
-    convert_xml_to_json(val_dir)
+    convert_xml_to_json(train_dir, images_train)
+    convert_xml_to_json(val_dir, images_val)
 
     # json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
     # json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
