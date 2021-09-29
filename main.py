@@ -51,7 +51,7 @@ def save_images_log(path: str) -> list:
     assert exists(path), "--path is not correct"
     if not has_files(path):
         print("Not images found, try using other path or adding images")
-        exit(0)  # If not images exit, cause it is necessary to have xml and jpg together
+        exit(0)  # If not images, exit, cause it is necessary to have xml and jpg together
     else:
         images = list_images(path)
         f = open(join(path, "image.txt"), 'w')
