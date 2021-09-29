@@ -10,12 +10,14 @@ Generates the polygon shape between the four points of the rectangle in order to
 * /dataset
     * /train
     * /val
-    * convertXMLtoJSON.py
+* main.py
 
-````````````$ python convertXMLtoJSON.py````````````
+````````````$ python main.py````````````
 
 
 ### How should your XML be?
+
+You can check this [xml](dataset/val/IMG_20180413_092050.xml) and see the result [JSON](dataset/val/dataset.json).
 
 ```
 <annotation>
