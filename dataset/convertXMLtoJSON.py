@@ -1,7 +1,8 @@
 """
 converterXMLtoJSON
-Detect all annotations in xml files (bounding boxes) and convert to json (polygon shape)
-It works for one class in Mask R-CNN
+
+Detect annotations in xml files (bounding boxes) and
+converts to json (polygon shape).
 
 @author Adonis Gonzalez
 
@@ -39,7 +40,7 @@ def list_images(path: str) -> list:
     return [j for j in listdir(path) if j.endswith('.jpg')]
 
 
-def save_images_log(path: str):
+def save_images_log(path: str) -> list:
     """
     Grab images list and save a log in a specific path.
 
@@ -119,12 +120,20 @@ def convert_xml_to_json(path: str, image_list: list):
 
 
 def read_json(dir_path: str, filename: str):
-    with open(dir_path + '/' + filename) as json_file:
-        data = json.load(json_file)
-    return data
+    """
+    To read json files
+
+    :param dir_path: A str like /to/path/
+    :param filename: A str, json file name e.g data.json
+    :return: A JSON file object
+    """
+    file = join(dir_path, filename)
+    assert os.path.isfile(file), "-- check your path file"
+    return json.load(open(file))
 
 
 def remove_file(file_name: str):
+    assert os.path.isfile(file_name), "-- check your path file"
     if os.path.isfile(file_name):
         os.remove(file_name)
         print("Deleting file %s" % file_name)
@@ -138,18 +147,18 @@ if __name__ == "__main__":
     file_val = os.path.join(val_dir, "dataset.json")
 
     # Remove if exist dataset.json in both train and val
-    remove_file(file_train)
-    remove_file(file_val)
+    # remove_file(file_train)
+    # remove_file(file_val)
 
     # Grab images and save a log in both train and val
-    images_train = save_images_log(train_dir)
-    images_val = save_images_log(val_dir)
+    # images_train = save_images_log(train_dir)
+    # images_val = save_images_log(val_dir)
 
     # Convert from xml to json in both train and val
-    convert_xml_to_json(train_dir, images_train)
-    convert_xml_to_json(val_dir, images_val)
+    # convert_xml_to_json(train_dir, images_train)
+    # convert_xml_to_json(val_dir, images_val)
 
-    # json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
-    # json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
-    # if json1 == json2:
-    #     print("Equals!")
+    json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
+    json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
+    if json1 == json2:
+        print("Equals!")
