@@ -105,6 +105,10 @@ Y = ymin + ((ymax-ymin)/2)
 
 The way to create a false mask for MaskRCNN with annotations made with LabelImg.
 
+## Author
+
+* **Adonis González Godoy** ([Email](adions025@gmail.com) - [Github](https://github.com/adions025))
+
 
 
 
