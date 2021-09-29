@@ -51,7 +51,7 @@ def save_images_log(path: str) -> list:
     assert os.path.exists(path), "--path is not correct"
     if not has_files(path):
         print("Not images found, try using other path or adding images")
-        exit(0)
+        exit(0)  # If not images exit, cause it is necessary to have xml and jpg together
     else:
         images = list_images(path)
         f = open(join(path, "image.txt"), 'w')
@@ -141,9 +141,9 @@ def convert_xml_to_json(path: str, image_list: list):
                 all_json[img] = images.copy()
                 number += 1
 
-    with open(path + '/' + "dataset.json", "a") as outfile:
-        json.dump(all_json, outfile)
-        print("File dataset.json was save in: ", path)
+    out_file = open(join(path, "dataset.json"), "a")
+    json.dump(all_json, out_file)
+    print("File dataset.json was save in: ", path)
 
 
 if __name__ == "__main__":
