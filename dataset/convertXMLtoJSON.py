@@ -27,6 +27,7 @@ def has_files(path: str) -> bool:
     :param path: A str like /to/path/
     :return: A bool True/False
     """
+    assert os.path.exists(path), "--path is not correct"
     return any([j for j in listdir(path) if j.endswith('.jpg')])
 
 
@@ -37,6 +38,7 @@ def list_images(path: str) -> list:
     :param path: A str like /to/path/
     :return: A list that contains all found files
     """
+    assert os.path.exists(path), "--path is not correct"
     return [j for j in listdir(path) if j.endswith('.jpg')]
 
 
@@ -46,6 +48,7 @@ def save_images_log(path: str) -> list:
 
     :param path: A str like /to/path/
     """
+    assert os.path.exists(path), "--path is not correct"
     if not has_files(path):
         print("Not images found, try using other path or adding images")
         exit(0)
@@ -55,6 +58,30 @@ def save_images_log(path: str) -> list:
         [f.write("%s\n" % x) for x in images]
         f.close()
         return images
+
+
+def read_json(dir_path: str, filename: str):
+    """
+    To read json files
+
+    :param dir_path: A str like /to/path/
+    :param filename: A str, json file name e.g data.json
+    :return: A JSON file object
+    """
+    file = join(dir_path, filename)
+    assert os.path.isfile(file), "-- check your path file"
+    return json.load(open(file))
+
+
+def remove_file(file_name: str):
+    """
+    Remove a given file, if not raises assert.
+
+    :param file_name: A str like /to/path/file
+    """
+    assert os.path.isfile(file_name), "-- check your path file"
+    os.remove(file_name)
+    print("Deleting file %s" % file_name)
 
 
 def convert_xml_to_json(path: str, image_list: list):
@@ -119,46 +146,25 @@ def convert_xml_to_json(path: str, image_list: list):
         print("File dataset.json was save in: ", path)
 
 
-def read_json(dir_path: str, filename: str):
-    """
-    To read json files
-
-    :param dir_path: A str like /to/path/
-    :param filename: A str, json file name e.g data.json
-    :return: A JSON file object
-    """
-    file = join(dir_path, filename)
-    assert os.path.isfile(file), "-- check your path file"
-    return json.load(open(file))
-
-
-def remove_file(file_name: str):
-    assert os.path.isfile(file_name), "-- check your path file"
-    if os.path.isfile(file_name):
-        os.remove(file_name)
-        print("Deleting file %s" % file_name)
-    else:
-        print("It does not exist  %s" % file_name)
-
-
 if __name__ == "__main__":
     # Json file for both train and val dir
     file_train = os.path.join(train_dir, "dataset.json")
     file_val = os.path.join(val_dir, "dataset.json")
 
     # Remove if exist dataset.json in both train and val
-    # remove_file(file_train)
-    # remove_file(file_val)
+    # Just to create a new files
+    remove_file(file_train)
+    remove_file(file_val)
 
     # Grab images and save a log in both train and val
-    # images_train = save_images_log(train_dir)
-    # images_val = save_images_log(val_dir)
+    images_train = save_images_log(train_dir)
+    images_val = save_images_log(val_dir)
 
     # Convert from xml to json in both train and val
-    # convert_xml_to_json(train_dir, images_train)
-    # convert_xml_to_json(val_dir, images_val)
+    convert_xml_to_json(train_dir, images_train)
+    convert_xml_to_json(val_dir, images_val)
 
-    json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
-    json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
-    if json1 == json2:
-        print("Equals!")
+    # json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
+    # json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
+    # if json1 == json2:
+    #     print("Equals!")
