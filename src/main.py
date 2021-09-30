@@ -19,8 +19,9 @@ train_dir = join(data_dir, "train")
 val_dir = join(data_dir, "val")
 
 # Files to create, just path definition
-file_train = join(train_dir, "dataset.json")
-file_val = join(val_dir, "dataset.json")
+filename_json = "dataset.json"
+file_train = join(train_dir, filename_json)
+file_val = join(val_dir, filename_json)
 
 
 def convert_xml_to_json(path: str, image_list: list):
@@ -69,7 +70,7 @@ def convert_xml_to_json(path: str, image_list: list):
                 all_json[img] = images.copy()
                 number += 1
 
-    out_file = open(join(path, "dataset.json"), "a")
+    out_file = open(join(path, filename_json), "a")
     json.dump(all_json, out_file)
     print("File dataset.json was save in: ", path)
 
