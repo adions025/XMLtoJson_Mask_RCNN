@@ -23,6 +23,12 @@ def calculate_xy(x_max: int, x_min: int, y_max: int, y_min: int) -> Tuple[int, i
 
 
 def get_points(x_max: int, x_min: int, y_max: int, y_min: int, x_value: int, y_value: int) -> dict:
+    """
+    To create polygon shape, all points included in dictionary.
+
+    :params **args: int values, to create polygon shape
+    :return: A dictionary
+    """
     regions = (
         {"all_points_x": (x_min, x_value, x_max, x_max, x_max, x_value, x_min, x_min, x_min),
          "all_points_y": (y_min, y_min, y_min, y_value, y_max, y_max, y_max, y_value, y_min)
