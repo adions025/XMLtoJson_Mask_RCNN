@@ -92,7 +92,7 @@ def convert_xml_to_json(path: str, image_list: list):
         name_xml = img.split('.jpg')[0] + '.xml'
         images.update({"filename": img})
         root = et.ElementTree(file=join(path, name_xml)).getroot()
-        obj_counter, x_min, x_max, y_min, y_max, regions_tmp, regi = {}, {}, {}, {}, {}, {}, {}
+        obj_counter, x_min, x_max, y_min, y_max, coord, regi = {}, {}, {}, {}, {}, {}, {}
         number = 0
         for child_of_root in root:
             if child_of_root.tag == 'object':
@@ -111,20 +111,13 @@ def convert_xml_to_json(path: str, image_list: list):
                             if child_of_root.tag == 'ymax':
                                 y_max[obj_id] = int(child_of_root.text)
 
-                x_value, y_value = calculate_xy(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id])
-
                 regions = {}
-                regions_tmp = ({"all_points_x": (
-                    x_min[obj_id], x_value, x_max[obj_id], x_max[obj_id], x_max[obj_id], x_value,
-                    x_min[obj_id], x_min[obj_id], x_min[obj_id]),
-                    "all_points_y": (
-                        y_min[obj_id], y_min[obj_id], y_min[obj_id], y_value,
-                        y_max[obj_id], y_max[obj_id], y_max[obj_id], y_value,
-                        y_min[obj_id])})
+                x_value, y_value = calculate_xy(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id])
+                coord = get_points(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id], x_value, y_value)
 
                 category_id_name = (obj_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
                 regions.update({"region_attributes": {"name": category_id_name}})
-                shapes = {"shape_attributes": regions_tmp}
+                shapes = {"shape_attributes": coord}
                 regions.update(shapes)
                 polygon.update({"name": "polygon"})
                 regions.update(shapes)

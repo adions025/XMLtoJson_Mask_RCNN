@@ -20,3 +20,11 @@ def calculate_xy(x_max: int, x_min: int, y_max: int, y_min: int) -> Tuple[int, i
     y_value = int(y_min + y_min_temp)
 
     return x_value, y_value
+
+
+def get_points(x_max: int, x_min: int, y_max: int, y_min: int, x_value: int, y_value: int) -> dict:
+    regions = (
+        {"all_points_x": (x_min, x_value, x_max, x_max, x_max, x_value, x_min, x_min, x_min),
+         "all_points_y": (y_min, y_min, y_min, y_value, y_max, y_max, y_max, y_value, y_min)
+         })
+    return regions
