@@ -10,12 +10,12 @@ converts to json (polygon shape).
 from os.path import join, dirname, realpath, exists, isfile
 import xml.etree.cElementTree as et
 from os import listdir
-from util import *
+from src.util import *
 import json
 import os
 
 ROOT_DIR = dirname(realpath(__file__))
-data_dir = join(ROOT_DIR, "dataset")
+data_dir = join(ROOT_DIR, "../dataset")
 train_dir = join(data_dir, "train")
 val_dir = join(data_dir, "val")
 
