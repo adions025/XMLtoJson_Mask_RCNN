@@ -60,7 +60,7 @@ def save_images_log(path: str) -> list:
         return images
 
 
-def read_json(dir_path: str, filename: str):
+def read_json(dir_path: str, filename: str) -> json:
     """
     To read json files
 
@@ -90,46 +90,43 @@ def convert_xml_to_json(path: str, image_list: list):
     for img in image_list:
         name_xml = img.split('.jpg')[0] + '.xml'
         images.update({"filename": img})
-        root = et.ElementTree(file=path + '/' + name_xml).getroot()
-        counterObject, xmin, xmax, ymin, ymax, regionsTemp, regi = {}, {}, {}, {}, {}, {}, {}
+        root = et.ElementTree(file=join(path, name_xml)).getroot()
+        obj_counter, x_min, x_max, y_min, y_max, regions_tmp, regi = {}, {}, {}, {}, {}, {}, {}
         number = 0
         for child_of_root in root:
-            if child_of_root.tag == 'filename':
-                image_id = child_of_root.text
-                sizetmp = os.path.getsize(path + '/' + image_id)
             if child_of_root.tag == 'object':
                 for child_of_object in child_of_root:
                     if child_of_object.tag == 'name':
                         category_id = child_of_object.text
-                        counterObject[category_id] = number
+                        obj_counter[category_id] = number
                     if child_of_object.tag == 'bndbox':
                         for child_of_root in child_of_object:
                             if child_of_root.tag == 'xmin':
-                                xmin[category_id] = int(child_of_root.text)
+                                x_min[category_id] = int(child_of_root.text)
                             if child_of_root.tag == 'xmax':
-                                xmax[category_id] = int(child_of_root.text)
+                                x_max[category_id] = int(child_of_root.text)
                             if child_of_root.tag == 'ymin':
-                                ymin[category_id] = int(child_of_root.text)
+                                y_min[category_id] = int(child_of_root.text)
                             if child_of_root.tag == 'ymax':
-                                ymax[category_id] = int(child_of_root.text)
+                                y_max[category_id] = int(child_of_root.text)
 
-                xmintmp = int(xmax[category_id] - xmin[category_id]) / 2
-                xvalue = int(xmin[category_id] + xmintmp)
-                ymintemp = int(ymax[category_id] - ymin[category_id]) / 2
-                yvalue = int(ymin[category_id] + ymintemp)
+                xmintmp = int(x_max[category_id] - x_min[category_id]) / 2
+                xvalue = int(x_min[category_id] + xmintmp)
+                ymintemp = int(y_max[category_id] - y_min[category_id]) / 2
+                yvalue = int(y_min[category_id] + ymintemp)
 
                 regions = {}
-                regionsTemp = ({"all_points_x": (
-                    xmin[category_id], xvalue, xmax[category_id], xmax[category_id], xmax[category_id], xvalue,
-                    xmin[category_id], xmin[category_id], xmin[category_id]),
+                regions_tmp = ({"all_points_x": (
+                    x_min[category_id], xvalue, x_max[category_id], x_max[category_id], x_max[category_id], xvalue,
+                    x_min[category_id], x_min[category_id], x_min[category_id]),
                     "all_points_y": (
-                        ymin[category_id], ymin[category_id], ymin[category_id], yvalue,
-                        ymax[category_id], ymax[category_id], ymax[category_id], yvalue,
-                        ymin[category_id])})
+                        y_min[category_id], y_min[category_id], y_min[category_id], yvalue,
+                        y_max[category_id], y_max[category_id], y_max[category_id], yvalue,
+                        y_min[category_id])})
 
                 category_id_name = (category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
                 regions.update({"region_attributes": {"name": category_id_name}})
-                shapes = {"shape_attributes": regionsTemp}
+                shapes = {"shape_attributes": regions_tmp}
                 regions.update(shapes)
                 polygon.update({"name": "polygon"})
                 regions.update(shapes)
@@ -137,7 +134,7 @@ def convert_xml_to_json(path: str, image_list: list):
                 regi[number] = regions.copy()
                 regions = {"regions": regi}
                 images.update(regions)
-                images.update({"size": sizetmp})
+                images.update({"size": os.path.getsize(join(path, img))})
                 all_json[img] = images.copy()
                 number += 1
 
@@ -164,7 +161,7 @@ if __name__ == "__main__":
     convert_xml_to_json(train_dir, images_train)
     convert_xml_to_json(val_dir, images_val)
 
-    # json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
-    # json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
-    # if json1 == json2:
-    #     print("Equals!")
+    json1 = json.dumps(read_json(train_dir, "dataset.json"), sort_keys=True)
+    json2 = json.dumps(read_json(train_dir, "dataset_good.json"), sort_keys=True)
+    if json1 == json2:
+        print("Equals!")
