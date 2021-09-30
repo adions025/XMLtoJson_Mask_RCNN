@@ -12,10 +12,15 @@ import xml.etree.cElementTree as et
 from src.util import *
 import json
 
+# Paths
 ROOT_DIR = dirname(realpath(__file__))
 data_dir = join(ROOT_DIR, "../dataset")
 train_dir = join(data_dir, "train")
 val_dir = join(data_dir, "val")
+
+# Files to create, just path definition
+file_train = join(train_dir, "dataset.json")
+file_val = join(val_dir, "dataset.json")
 
 
 def convert_xml_to_json(path: str, image_list: list):
@@ -70,11 +75,9 @@ def convert_xml_to_json(path: str, image_list: list):
 
 
 if __name__ == "__main__":
-    # I convert both train and val dataset annotation
-    file_train = join(train_dir, "dataset.json")
-    file_val = join(val_dir, "dataset.json")
-
-    # Remove if exist dataset.json in both train and val
+    # I convert for both train and val dataset annotation.
+    # If you just have a folder, just comment step for val.
+    # If not file dataset.json, just comment next two lines.
     remove_file(file_train)
     remove_file(file_val)
 
