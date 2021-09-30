@@ -10,6 +10,7 @@ converts to json (polygon shape).
 from os.path import join, dirname, realpath, exists, isfile
 import xml.etree.cElementTree as et
 from os import listdir
+from util import *
 import json
 import os
 
@@ -97,34 +98,31 @@ def convert_xml_to_json(path: str, image_list: list):
             if child_of_root.tag == 'object':
                 for child_of_object in child_of_root:
                     if child_of_object.tag == 'name':
-                        category_id = child_of_object.text
-                        obj_counter[category_id] = number
+                        obj_id = child_of_object.text
+                        obj_counter[obj_id] = number
                     if child_of_object.tag == 'bndbox':
                         for child_of_root in child_of_object:
                             if child_of_root.tag == 'xmin':
-                                x_min[category_id] = int(child_of_root.text)
+                                x_min[obj_id] = int(child_of_root.text)
                             if child_of_root.tag == 'xmax':
-                                x_max[category_id] = int(child_of_root.text)
+                                x_max[obj_id] = int(child_of_root.text)
                             if child_of_root.tag == 'ymin':
-                                y_min[category_id] = int(child_of_root.text)
+                                y_min[obj_id] = int(child_of_root.text)
                             if child_of_root.tag == 'ymax':
-                                y_max[category_id] = int(child_of_root.text)
+                                y_max[obj_id] = int(child_of_root.text)
 
-                xmintmp = int(x_max[category_id] - x_min[category_id]) / 2
-                xvalue = int(x_min[category_id] + xmintmp)
-                ymintemp = int(y_max[category_id] - y_min[category_id]) / 2
-                yvalue = int(y_min[category_id] + ymintemp)
+                x_value, y_value = calculate_xy(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id])
 
                 regions = {}
                 regions_tmp = ({"all_points_x": (
-                    x_min[category_id], xvalue, x_max[category_id], x_max[category_id], x_max[category_id], xvalue,
-                    x_min[category_id], x_min[category_id], x_min[category_id]),
+                    x_min[obj_id], x_value, x_max[obj_id], x_max[obj_id], x_max[obj_id], x_value,
+                    x_min[obj_id], x_min[obj_id], x_min[obj_id]),
                     "all_points_y": (
-                        y_min[category_id], y_min[category_id], y_min[category_id], yvalue,
-                        y_max[category_id], y_max[category_id], y_max[category_id], yvalue,
-                        y_min[category_id])})
+                        y_min[obj_id], y_min[obj_id], y_min[obj_id], y_value,
+                        y_max[obj_id], y_max[obj_id], y_max[obj_id], y_value,
+                        y_min[obj_id])})
 
-                category_id_name = (category_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
+                category_id_name = (obj_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
                 regions.update({"region_attributes": {"name": category_id_name}})
                 shapes = {"shape_attributes": regions_tmp}
                 regions.update(shapes)
