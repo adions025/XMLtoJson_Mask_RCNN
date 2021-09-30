@@ -86,42 +86,44 @@ def remove_file(file_name: str):
 
 
 def convert_xml_to_json(path: str, image_list: list):
-    images, size, polygon, all_json = {}, {}, {}, {}
+    """
+    Convert from xml to json. For each img is necessary
+    a xml file annotation. This function save json file.
+
+    :param path: A str like /to/path/file
+    :param image_list: A list of images in the same path
+    """
+    all_json = {}
 
     for img in image_list:
         name_xml = img.split('.jpg')[0] + '.xml'
-        images.update({"filename": img})
+        images = ({"filename": img})
         root = et.ElementTree(file=join(path, name_xml)).getroot()
-        obj_counter, x_min, x_max, y_min, y_max, coord, regi = {}, {}, {}, {}, {}, {}, {}
+        obj_counter, regi = {}, {}
         number = 0
         for child_of_root in root:
             if child_of_root.tag == 'object':
                 for child_of_object in child_of_root:
                     if child_of_object.tag == 'name':
-                        obj_id = child_of_object.text
+                        obj_id = child_of_object.text.split(' ')[0]  # cause some <name>SD 1<name>, just use SD
                         obj_counter[obj_id] = number
                     if child_of_object.tag == 'bndbox':
                         for child_of_root in child_of_object:
                             if child_of_root.tag == 'xmin':
-                                x_min[obj_id] = int(child_of_root.text)
+                                x_min = int(child_of_root.text)
                             if child_of_root.tag == 'xmax':
-                                x_max[obj_id] = int(child_of_root.text)
+                                x_max = int(child_of_root.text)
                             if child_of_root.tag == 'ymin':
-                                y_min[obj_id] = int(child_of_root.text)
+                                y_min = int(child_of_root.text)
                             if child_of_root.tag == 'ymax':
-                                y_max[obj_id] = int(child_of_root.text)
+                                y_max = int(child_of_root.text)
 
-                regions = {}
-                x_value, y_value = calculate_xy(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id])
-                coord = get_points(x_max[obj_id], x_min[obj_id], y_max[obj_id], y_min[obj_id], x_value, y_value)
+                x_value, y_value = calculate_xy(x_max, x_min, y_max, y_min)
+                coord = get_points(x_max, x_min, y_max, y_min, x_value, y_value)
 
-                category_id_name = (obj_id.split(' ')[0])  # cause some <name>SD 1<name>, just use SD
-                regions.update({"region_attributes": {"name": category_id_name}})
-                shapes = {"shape_attributes": coord}
-                regions.update(shapes)
-                polygon.update({"name": "polygon"})
-                regions.update(shapes)
-                regions.update(polygon)
+                regions = ({"region_attributes": {"name": obj_id}})
+                regions.update({"shape_attributes": coord})
+                regions.update({"name": "polygon"})
                 regi[number] = regions.copy()
                 regions = {"regions": regi}
                 images.update(regions)
