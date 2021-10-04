@@ -1,4 +1,4 @@
-# XMLtoJson_Mask_RCNN
+# XML to JSON converter and polygon shape builder for MASK-RCNN
 Now you can use segmentation in Mask_RCNN, even if your annotations are rectangular instead of polygon.
 A false masks does not help to be more precise, as it is not providing new information beyond the bounding boxes.
 Generates the polygon shape between the four points of the rectangle in order to achieve the polygon shape.
