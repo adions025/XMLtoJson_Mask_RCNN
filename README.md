@@ -6,7 +6,7 @@ Generates the polygon shape between the four points of the rectangle in order to
 ## Requirements
 * Python >=3.6 
 
-### Usage
+## Usage
 * /dataset
     * /train
     * /val
@@ -15,7 +15,7 @@ Generates the polygon shape between the four points of the rectangle in order to
 ````````````$ python main.py````````````
 
 
-### How should your XML be?
+## How should your XML be?
 
 You can check this [xml](dataset/val/IMG_20180413_092050.xml) and see the result [JSON](dataset/val/dataset.json).
 
@@ -93,7 +93,7 @@ You can check this [xml](dataset/val/IMG_20180413_092050.xml) and see the result
 
 ```
 
-### keyworks
+## keyworks
 xml, json, converterter, xml to json, convertidor de xml a json, mask rcnn
 
 ```
