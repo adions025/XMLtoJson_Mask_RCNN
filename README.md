@@ -21,7 +21,7 @@ You can check this [xml](dataset/val/IMG_20180413_092050.xml) and see the result
 <annotation>
 	<folder>keuring</folder>
 	<filename>IMG_20180413_091455.jpg</filename>
-	<path>D:\Seafile\Archive\Projects\125 IWAUC\WP1\fotos 04-13-2018\keuring\IMG_20180413_091455.jpg</path>
+	<path>D:\Seafile\Archive\Projects\125 IWAUC\IMG_20180413_091455.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
