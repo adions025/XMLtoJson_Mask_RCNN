@@ -3,6 +3,8 @@ Now you can use segmentation in Mask_RCNN, even if your annotations are rectangu
 A false masks does not help to be more precise, as it is not providing new information beyond the bounding boxes.
 Generates the polygon shape between the four points of the rectangle in order to achieve the polygon shape.
 
+## Requirements
+* Python >=3.6 
 
 ### Usage
 * /dataset
