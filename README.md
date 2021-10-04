@@ -90,8 +90,6 @@ You can check this [xml](dataset/val/IMG_20180413_092050.xml) and see the result
 }
 
 ```
-## Info
-If you noticed, the rectangular shape only has the four points, but for the polygon shape we need more points, these points will be created from what we have.
 
 ### keyworks
 xml, json, converterter, xml to json, convertidor de xml a json, mask rcnn
