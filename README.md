@@ -4,7 +4,7 @@ A false masks does not help to be more precise, as it is not providing new infor
 Generates the polygon shape between the four points of the rectangle in order to achieve the polygon shape.
 
 
-### run this file inside your /dataset folder
+### Usage
 * /dataset
     * /train
     * /val
