@@ -79,8 +79,8 @@ if __name__ == "__main__":
     # I convert for both train and val dataset annotation.
     # If you just have a folder, just comment step for val.
     # If not file dataset.json, just comment next two lines.
-    remove_file(file_train)
-    remove_file(file_val)
+    # remove_file(file_train)
+    # remove_file(file_val)
 
     # Grab images and save a log in both train and val
     images_train = save_images_log(train_dir)
